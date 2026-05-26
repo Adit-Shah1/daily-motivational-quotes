@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Motivation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='40' fill='none' stroke='%23c9a87c' stroke-width='2'/></svg>">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg: #faf9f7;
+      --text-primary: #2d2a26;
+      --text-secondary: #8a8580;
+      --accent: #c9a87c;
+      --card-bg: #ffffff;
+    }
+
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle paper texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+    }
+
+    /* Floating decorative circle */
+    .floating-circle {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      border: 1px solid var(--accent);
+      border-radius: 50%;
+      opacity: 0.15;
+      animation: float 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .floating-circle {
+        animation: none;
+      }
+    }
+
+    .floating-circle:nth-child(1) {
+      top: -100px;
+      right: -80px;
+      animation-delay: 0s;
+    }
+
+    .floating-circle:nth-child(2) {
+      bottom: -120px;
+      left: -100px;
+      animation-delay: -4s;
+      width: 200px;
+      height: 200px;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(3deg); }
+      }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+      padding: 48px 64px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 800ms ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .decorative-line {
+      width: 48px;
+      height: 1px;
+      background: var(--accent);
+      margin: 0 auto 32px;
+    }
+
+    .quote-wrapper {
+      position: relative;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .quote {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.5rem, 5vw, 2.2rem);
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--text-primary);
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 400ms ease, transform 400ms ease;
+    }
+
+    .quote.fade-out {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    .quote mark {
+      background: none;
+      color: var(--accent);
+    }
+
+    .author {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-secondary);
+      margin-top: 32px;
+      opacity: 1;
+      transition: opacity 400ms ease;
+    }
+
+    .author.fade-out {
+      opacity: 0;
+    }
+
+    .author::before {
+      content: '— ';
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+    }
+
+    .date {
+      font-size: 0.75rem;
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+    }
+
+    .refresh-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: transform 200ms ease, background-color 200ms ease;
+      padding: 0;
+    }
+
+    .refresh-btn:hover {
+      transform: scale(1.1);
+      background-color: rgba(201, 168, 124, 0.1);
+    }
+
+    .refresh-btn:active {
+      transform: scale(0.95);
+    }
+
+    .refresh-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--text-secondary);
+      transition: stroke 200ms ease;
+    }
+
+    .refresh-btn:hover svg {
+      stroke: var(--accent);
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .card {
+        padding: 32px 24px;
+      }
+
+      .decorative-line {
+        margin-bottom: 24px;
+      }
+
+      .author {
+        margin-top: 24px;
+      }
+
+      .meta {
+        margin-top: 32px;
+      }
+    }
+
+    /* Custom selection */
+    ::selection {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--text-secondary);
+      border-radius: 4px;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating decorative elements -->
+  <div class="floating-circle"></div>
+  <div class="floating-circle"></div>
+
+  <div class="container">
+    <div class="card">
+      <div class="decorative-line"></div>
+      
+      <div class="quote-wrapper">
+        <blockquote class="quote" id="quote"></blockquote>
+        <cite class="author" id="author"></cite>
+      </div>
+
+      <div class="meta">
+        <span class="date" id="date"></span>
+        <button class="refresh-btn" id="refreshBtn" aria-label="Get new quote" title="New quote">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const quotes = [
+      { text: "The only way to do <mark>great work</mark> is to love what you do.", author: "Steve Jobs" },
+      { text: "In the middle of <mark>difficulty</mark> lies opportunity.", author: "Albert Einstein" },
+      { text: "The future belongs to those who believe in the <mark>beauty of their dreams</mark>.", author: "Eleanor Roosevelt" },
+      { text: "It is not the strongest that survives, but the most <mark>adaptable</mark>.", author: "Charles Darwin" },
+      { text: "Be yourself; everyone else is already <mark>taken</mark>.", author: "Oscar Wilde" },
+      { text: "The only <mark>impossible</mark> journey is the one you never begin.", author: "Tony Robbins" },
+      { text: "Success is not final, <mark>failure</mark> is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+      { text: "What you get by achieving your goals is not as important as <mark>what you become</mark> by achieving your goals.", author: "Zig Ziglar" },
+      { text: "The mind is everything. What you think you <mark>become</mark>.", author: "Buddha" },
+      { text: "Act as if what you do makes a <mark>difference</mark>. It does.", author: "William James" },
+      { text: "The best time to plant a tree was 20 years ago. The second best time is <mark>now</mark>.", author: "Chinese Proverb" },
+      { text: "Your time is limited, don't waste it living someone else's <mark>life</mark>.", author: "Steve Jobs" },
+      { text: "The only limit to our realization of tomorrow is our <mark>doubts of today</mark>.", author: "Franklin D. Roosevelt" },
+      { text: "Everything you've ever wanted is on the other side of <mark>discipline</mark>.", author: "Tom Corley" },
+      { text: "The secret of getting ahead is getting <mark>started</mark>.", author: "Mark Twain" },
+      { text: "You miss 100% of the shots you don't take.", author: "Wayne Gretzky" },
+      { text: "Whether you think you can or you think you can't, you're <mark>right</mark>.", author: "Henry Ford" },
+      { text: "The greatest glory in living lies not in never falling, but in <mark>rising every time</mark> we fall.", author: "Nelson Mandela" },
+      { text: "Life is what happens when you're busy making other <mark>plans</mark>.", author: "John Lennon" },
+      { text: "The way to get started is to quit talking and <mark>begin doing</mark>.", author: "Walt Disney" },
+      { text: "If you look at what you have in life, you'll always have more. If you look at what you don't have, you'll never have <mark>enough</mark>.", author: "Oprah Winfrey" },
+      { text: "I have not failed. I've just found 10,000 ways that won't <mark>work</mark>.", author: "Thomas Edison" },
+      { text: "A person who never made a mistake never tried <mark>anything new</mark>.", author: "Albert Einstein" },
+      { text: "The question isn't who is going to let me; it's who is going to <mark>stop me</mark>.", author: "Ayn Rand" },
+      { text: "When one door of happiness closes, another opens.", author: "Helen Keller" }
+    ];
+
+    let currentQuoteIndex = -1;
+
+    function getDailyQuoteIndex() {
+      const today = new Date();
+      const start = new Date(today.getFullYear(), 0, 0);
+      const diff = today - start;
+      const oneDay = 1000 * 60 * 60 * 24;
+      const dayOfYear = Math.floor(diff / oneDay);
+      return dayOfYear % quotes.length;
+    }
+
+    function formatDate() {
+      const options = { weekday: 'long', month: 'long', day: 'numeric' };
+      return new Date().toLocaleDateString('en-US', options);
+    }
+
+    function getNewQuoteIndex() {
+      let newIndex;
+      do {
+        newIndex = Math.floor(Math.random() * quotes.length);
+      } while (newIndex === currentQuoteIndex && quotes.length > 1);
+      return newIndex;
+    }
+
+    function displayQuote(index, animate = true) {
+      const quoteEl = document.getElementById('quote');
+      const authorEl = document.getElementById('author');
+      const dateEl = document.getElementById('date');
+
+      if (animate) {
+        quoteEl.classList.add('fade-out');
+        authorEl.classList.add('fade-out');
+
+        setTimeout(() => {
+          quoteEl.innerHTML = quotes[index].text;
+          authorEl.textContent = quotes[index].author;
+          quoteEl.classList.remove('fade-out');
+          authorEl.classList.remove('fade-out');
+        }, 400);
+      } else {
+        quoteEl.innerHTML = quotes[index].text;
+        authorEl.textContent = quotes[index].author;
+      }
+
+      dateEl.textContent = formatDate();
+      currentQuoteIndex = index;
+    }
+
+    function refreshQuote() {
+      const newIndex = getNewQuoteIndex();
+      displayQuote(newIndex, true);
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      const dailyIndex = getDailyQuoteIndex();
+      displayQuote(dailyIndex, false);
+
+      document.getElementById('refreshBtn').addEventListener('click', refreshQuote);
+    });
+  </script>
+</body>
+</html>
